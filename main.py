@@ -5,10 +5,13 @@ from fake_useragent import UserAgent
 import json
 import pandas as pd
 import requests
+import vk_api
+from vk_api.exceptions import ApiError
+
 spisok = []
 token = 'a981cae6a981cae6a981cae6d9aaae9f91aa981a981cae6ce7c910f1716f384606a5381'
 needwords = ['МГЮА', 'Мгюа', 'Кутафина']
-needwordsmb = ['Владимир Дмитриевич Никишин', 'Владимир Никишин', 'Александр Сергеевич Глазков', 'Александр Глазков']
+query = ['Владимир Дмитриевич Никишин', 'Никишин Владимир Дмитриевич', 'Александр Сергеевич Глазков', 'Глазков Александр Сергеевич']
 ua = UserAgent()
 user_agent = ua.random
 options = webdriver.ChromeOptions()
@@ -16,46 +19,31 @@ options = webdriver.ChromeOptions()
 options.add_argument('--disable-popup-blocking')
 options.add_argument(f'--user-agent={user_agent}')
 driver = webdriver.Chrome(options=options)
-# def findgoogle_vk(testword):
-#     print('Запуск парсера в Google')
-#     try:
-#         driver.get(f'https://www.google.com/search?q=site%3Avk.com+{testword}')
-#         time.sleep(10)
-#         products = driver.find_elements(By.CLASS_NAME, 'yuRUbf')
-#         for product in products:
-#             url1 = product.find_element(By.CLASS_NAME, 'zReHs').get_attribute('href')
-#             title1 = product.find_element(By.CLASS_NAME, 'LC20lb').text.split()
-#             titlegood1 = ' '.join(title1)
-#             if url1:
-#                 driver.execute_script("window.open('');")
-#                 driver.switch_to.window(driver.window_handles[-1])
-#                 try:
-#                     driver.get(url1)
-#                     time.sleep(2)
-#                     text = driver.find_element(By.XPATH, '/html/body').text
-#                     if any(keyword in text for keyword in needwords) and any(keyword1 in text for keyword1 in needwordsmb):
-#                         spisok.append({
-#                             'url': url1,
-#                             'title': titlegood1
-#                         })
-#                     driver.close()
-#                     driver.switch_to.window(driver.window_handles[0])
-#
-#                 except Exception as e:
-#                     print(f'Произошла ошибка 2: {e}')
-#     except Exception as e:
-#         print(f'Произошла ошибка 1: {e}')
-def findgoogle_vk(testword):
-    url = 'https://api.vk.com/method/wall.search'
-    params = {
-        'access_token': token,
-        'v': '5.131',
-        'count': 50,
-        'q': testword
-    }
-    response = requests.get(url, params=params)
-    data = response.json()
-    items = data['response']['items']
+
+access_token = 'vk1.a.TG0toYM7T8fb1FOxFT-Vtxu-3Db4XVtdUbzhJeRnkDRx58mIujNZtci-S1jgFawYMpnqoWd6dmRs-slHgmoYdsES-mk7-ziTe9Wy-uHOs04ksIytCPpFcn-5QYnjmDOSofpiSCRCOwMDpEnBlzJd0JCARaqXVtBH8A_A4s-D8zbJQDHOb6Eok8C99uiWtmjf2t87gbKwyMbaiiLvBRhqlg'
+vk_session = vk_api.VkApi(token=access_token)
+vk = vk_session.get_api()
+
+def findvk(word):
+    try:
+        results = vk.newsfeed.search(q=word, count=200)
+        items = results['items']
+        for item in items:
+            if 'owner_id' in item and 'id' in item:
+                text = item.get('text').strip()
+                if any(r in text for r in query) and any(r1 in text for r1 in needwords):
+                    owner_id = item['owner_id']
+                    id = item['id']
+                    post_url = f'https://vk.com/wall{owner_id}_{id}'
+                    if post_url!='None':
+                        spisok.append({
+                            'url': post_url,
+                            'title': 'vk'
+                        })
+        print('Парсинг VK успешно завершён')
+    except ApiError as e:
+        print(f'Ошибка vkapi: {e}')
+
 def findyandex(testword):
     print('Запуск парсера в Яндекс')
     try:
@@ -68,18 +56,12 @@ def findyandex(testword):
                 titlegood2 = ' '.join(title2)
                 url2 = product.find_element(By.CLASS_NAME, 'OrganicTitle-Link').get_attribute('href')
 
-                if url2[:24]=='https://www.youtube.com':
-                    spisok.append({
-                        'url': url2,
-                        'title': titlegood2
-                    })
-
-                elif url2:
+                if url2[:23] != 'https://www.youtube.com':
                     driver.execute_script("window.open('');")
                     driver.switch_to.window(driver.window_handles[-1])
+                    driver.get(url2)
+                    time.sleep(2)
                     try:
-                        driver.get(url2)
-                        time.sleep(2)
                         text = driver.find_element(By.XPATH, '/html/body').text
                         if any(keyword in text for keyword in needwords):
                             spisok.append({
@@ -92,9 +74,10 @@ def findyandex(testword):
                         print(f'Произошла ошибка 4: {e}')
                 else:
                     print('Адрес не найден')
-
+        print('Парсинг Yandex успешно завершён')
     except Exception as e:
         print(f'Произошла ошибка 3: {e}')
+
     finally:
         driver.quit()
 def save_to_json(w, sp):
@@ -117,7 +100,7 @@ def save_to_excel(sp, fil='parserexcel.xlsx'):
         writer = pd.ExcelWriter(fil, engine='openpyxl')
         df.to_excel(writer, index=False, sheet_name='Parse')
         worksheet = writer.sheets['Parse']
-        worksheet.column_dimensions['A'].width = 140
+        worksheet.column_dimensions['A'].width = 85
         worksheet.column_dimensions['B'].width = 160
         writer.close()
         print('Данные сохранены в Excel')
@@ -126,38 +109,10 @@ def save_to_excel(sp, fil='parserexcel.xlsx'):
 def main():
     print('Введите нужное словосочетание')
     word = input()
-    findgoogle_vk(word)
+    findvk(word)
     findyandex(word)
     finall_spisok = [dict(s) for s in {frozenset(sp.items()) for sp in spisok}]
     save_to_json(word, finall_spisok)
     save_to_excel(finall_spisok)
 if __name__=='__main__':
     main()
-    
-# import requests
-# from vk_api import vk_api
-# import requests
-
-# def search_vk_posts(query, access_token):
-#     url = 'https://api.vk.com/method/wall.search'
-#     params = {
-#         'access_token': access_token,
-#         'v': '5.131',
-#         'query': query,
-#         'count': 100
-#     }
-#     response = requests.get(url, params=params)
-#     data = response.json()
-
-#     post_links = []
-#     if 'response' in data:
-#         for post in data['response']['items']:
-#             post_links.append(f"https://vk.com/wall{post['owner_id']}_{post['id']}")
-
-#     return post_links
-
-# access_token = 'ваш_токен_доступа'
-# query = 'ваши_ключевые_слова'
-# links = search_vk_posts(query, access_token)
-# print(links)
-
