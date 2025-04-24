@@ -55,8 +55,7 @@ def findyandex(testword):
                 title2 = product.find_element(By.CLASS_NAME, 'OrganicTitleContentSpan').text.split()
                 titlegood2 = ' '.join(title2)
                 url2 = product.find_element(By.CLASS_NAME, 'OrganicTitle-Link').get_attribute('href')
-
-                if url2[:23] != 'https://www.youtube.com':
+                if 'youtube' not in url2:
                     driver.execute_script("window.open('');")
                     driver.switch_to.window(driver.window_handles[-1])
                     driver.get(url2)
@@ -94,29 +93,29 @@ def save_to_json(w, sp):
         print('Данные сохранены в Json')
     except Exception as e:
         print(f'Произошла ошибка на этапе сохранения в JSON: {e}')
-def save_to_excel(w, sp, fil='parserexcel.xlsx'):
+def save_to_excel(w, sp):
     try:
         if w == 'Владимир Дмитриевич Никишин':
             df = pd.DataFrame(sp)
-            writer = pd.ExcelWriter(fil, engine='openpyxl')
-            df.to_excel(writer, index=False, sheet_name='ParseVl')
-            worksheet = writer.sheets['Parse']
+            writer = pd.ExcelWriter('parserexcelVL.xlsx', engine='openpyxl')
+            df.to_excel(writer, index=False, sheet_name='ParseVL')
+            worksheet = writer.sheets['ParseVL']
             worksheet.column_dimensions['A'].width = 85
             worksheet.column_dimensions['B'].width = 160
             writer.close()
             print('Данные сохранены в Excel(VL)')
         elif w == 'Александр Сергеевич Глазков':
             df = pd.DataFrame(sp)
-            writer = pd.ExcelWriter(fil, engine='openpyxl')
+            writer = pd.ExcelWriter('parserexcelAL.xlsx', engine='openpyxl')
             df.to_excel(writer, index=False, sheet_name='ParseAL')
-            worksheet = writer.sheets['Parse']
+            worksheet = writer.sheets['ParseAL']
             worksheet.column_dimensions['A'].width = 85
             worksheet.column_dimensions['B'].width = 160
             writer.close()
             print('Данные сохранены в Excel(AL)')
         else:
             df = pd.DataFrame(sp)
-            writer = pd.ExcelWriter(fil, engine='openpyxl')
+            writer = pd.ExcelWriter('parserexcel.xlsx', engine='openpyxl')
             df.to_excel(writer, index=False, sheet_name='Parse')
             worksheet = writer.sheets['Parse']
             worksheet.column_dimensions['A'].width = 85
