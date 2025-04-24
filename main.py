@@ -94,25 +94,45 @@ def save_to_json(w, sp):
         print('Данные сохранены в Json')
     except Exception as e:
         print(f'Произошла ошибка на этапе сохранения в JSON: {e}')
-def save_to_excel(sp, fil='parserexcel.xlsx'):
+def save_to_excel(w, sp, fil='parserexcel.xlsx'):
     try:
-        df = pd.DataFrame(sp)
-        writer = pd.ExcelWriter(fil, engine='openpyxl')
-        df.to_excel(writer, index=False, sheet_name='Parse')
-        worksheet = writer.sheets['Parse']
-        worksheet.column_dimensions['A'].width = 85
-        worksheet.column_dimensions['B'].width = 160
-        writer.close()
-        print('Данные сохранены в Excel')
+        if w == 'Владимир Дмитриевич Никишин':
+            df = pd.DataFrame(sp)
+            writer = pd.ExcelWriter(fil, engine='openpyxl')
+            df.to_excel(writer, index=False, sheet_name='ParseVl')
+            worksheet = writer.sheets['Parse']
+            worksheet.column_dimensions['A'].width = 85
+            worksheet.column_dimensions['B'].width = 160
+            writer.close()
+            print('Данные сохранены в Excel(VL)')
+        elif w == 'Александр Сергеевич Глазков':
+            df = pd.DataFrame(sp)
+            writer = pd.ExcelWriter(fil, engine='openpyxl')
+            df.to_excel(writer, index=False, sheet_name='ParseAL')
+            worksheet = writer.sheets['Parse']
+            worksheet.column_dimensions['A'].width = 85
+            worksheet.column_dimensions['B'].width = 160
+            writer.close()
+            print('Данные сохранены в Excel(AL)')
+        else:
+            df = pd.DataFrame(sp)
+            writer = pd.ExcelWriter(fil, engine='openpyxl')
+            df.to_excel(writer, index=False, sheet_name='Parse')
+            worksheet = writer.sheets['Parse']
+            worksheet.column_dimensions['A'].width = 85
+            worksheet.column_dimensions['B'].width = 160
+            writer.close()
+            print('Данные сохранены в Excel')
     except Exception as e:
-        print(f'Произошла ошибка на этапесохранения в Excel: {e}')
+        print(f'Произошла ошибка на этапе сохранения в Excel: {e}')
 def main():
     print('Введите нужное словосочетание')
     word = input()
     findvk(word)
     findyandex(word)
-    finall_spisok = [dict(s) for s in {frozenset(sp.items()) for sp in spisok}]
+    finall_spisok = [dict(s) for s in {frozenset(sp.items()) for sp in spisok}] #убираем повторения
     save_to_json(word, finall_spisok)
-    save_to_excel(finall_spisok)
+    save_to_excel(word, finall_spisok)
+
 if __name__=='__main__':
     main()
