@@ -10,8 +10,8 @@ from vk_api.exceptions import ApiError
 
 spisok = []
 token = 'a981cae6a981cae6a981cae6d9aaae9f91aa981a981cae6ce7c910f1716f384606a5381'
-needwords = ['МГЮА', 'Мгюа', 'Кутафина']
-query = ['Владимир Дмитриевич Никишин', 'Никишин Владимир Дмитриевич', 'Александр Сергеевич Глазков', 'Глазков Александр Сергеевич']
+needwords = ['***', '***', ***']
+query = ['***', '***', '***', '***']
 ua = UserAgent()
 user_agent = ua.random
 options = webdriver.ChromeOptions()
@@ -81,10 +81,10 @@ def findyandex(testword):
         driver.quit()
 def save_to_json(w, sp):
     try:
-        if w == 'Владимир Дмитриевич Никишин':
+        if w == '***':
             with open('vova.json', 'w', encoding='utf-8') as file1:
                 json.dump(sp, file1, indent=4, ensure_ascii=False)
-        elif w == 'Александр Сергеевич Глазков':
+        elif w == '***':
             with open('aleks.json', 'w', encoding='utf-8') as file2:
                 json.dump(sp, file2, indent=4, ensure_ascii=False)
         else:
@@ -95,7 +95,7 @@ def save_to_json(w, sp):
         print(f'Произошла ошибка на этапе сохранения в JSON: {e}')
 def save_to_excel(w, sp):
     try:
-        if w == 'Владимир Дмитриевич Никишин':
+        if w == '***':
             df = pd.DataFrame(sp)
             writer = pd.ExcelWriter('parserexcelVL.xlsx', engine='openpyxl')
             df.to_excel(writer, index=False, sheet_name='ParseVL')
@@ -104,7 +104,7 @@ def save_to_excel(w, sp):
             worksheet.column_dimensions['B'].width = 160
             writer.close()
             print('Данные сохранены в Excel(VL)')
-        elif w == 'Александр Сергеевич Глазков':
+        elif w == '***':
             df = pd.DataFrame(sp)
             writer = pd.ExcelWriter('parserexcelAL.xlsx', engine='openpyxl')
             df.to_excel(writer, index=False, sheet_name='ParseAL')
