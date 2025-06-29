@@ -47,7 +47,7 @@ def findvk(word):
 def findyandex(testword):
     print('Запуск парсера в Яндекс')
     try:
-        for i in range(0, 2):#количество страниц
+        for i in range(0, 8):#количество страниц
             driver.get(f'https://ya.ru/search/?text={testword}&search_source=yaru_desktop_common&lr=11031&p={i}')
             time.sleep(12)
             products = driver.find_elements(By.CLASS_NAME, 'OrganicTitle')
@@ -80,48 +80,22 @@ def findyandex(testword):
     finally:
         driver.quit()
 def save_to_json(w, sp):
-    try:
-        if w == '***':
-            with open('vova.json', 'w', encoding='utf-8') as file1:
-                json.dump(sp, file1, indent=4, ensure_ascii=False)
-        elif w == '***':
-            with open('aleks.json', 'w', encoding='utf-8') as file2:
-                json.dump(sp, file2, indent=4, ensure_ascii=False)
-        else:
-            with open('test.json', 'w', encoding='utf-8') as file:
-                json.dump(sp, file, indent=4, ensure_ascii=False)
+    try:        
+        with open('test.json', 'w', encoding='utf-8') as file:
+            json.dump(sp, file, indent=4, ensure_ascii=False)
         print('Данные сохранены в Json')
     except Exception as e:
         print(f'Произошла ошибка на этапе сохранения в JSON: {e}')
 def save_to_excel(w, sp):
     try:
-        if w == '***':
-            df = pd.DataFrame(sp)
-            writer = pd.ExcelWriter('parserexcelVL.xlsx', engine='openpyxl')
-            df.to_excel(writer, index=False, sheet_name='ParseVL')
-            worksheet = writer.sheets['ParseVL']
-            worksheet.column_dimensions['A'].width = 85
-            worksheet.column_dimensions['B'].width = 160
-            writer.close()
-            print('Данные сохранены в Excel(VL)')
-        elif w == '***':
-            df = pd.DataFrame(sp)
-            writer = pd.ExcelWriter('parserexcelAL.xlsx', engine='openpyxl')
-            df.to_excel(writer, index=False, sheet_name='ParseAL')
-            worksheet = writer.sheets['ParseAL']
-            worksheet.column_dimensions['A'].width = 85
-            worksheet.column_dimensions['B'].width = 160
-            writer.close()
-            print('Данные сохранены в Excel(AL)')
-        else:
-            df = pd.DataFrame(sp)
-            writer = pd.ExcelWriter('parserexcel.xlsx', engine='openpyxl')
-            df.to_excel(writer, index=False, sheet_name='Parse')
-            worksheet = writer.sheets['Parse']
-            worksheet.column_dimensions['A'].width = 85
-            worksheet.column_dimensions['B'].width = 160
-            writer.close()
-            print('Данные сохранены в Excel')
+        df = pd.DataFrame(sp)
+        writer = pd.ExcelWriter('parserexcel.xlsx', engine='openpyxl')
+        df.to_excel(writer, index=False, sheet_name='Parse')
+        worksheet = writer.sheets['Parse']
+        worksheet.column_dimensions['A'].width = 85
+        worksheet.column_dimensions['B'].width = 160
+        writer.close()
+        print('Данные сохранены в Excel')
     except Exception as e:
         print(f'Произошла ошибка на этапе сохранения в Excel: {e}')
 def main():
