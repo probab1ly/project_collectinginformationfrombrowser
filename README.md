@@ -20,9 +20,10 @@
 -->
 
 
+[![Typing SVG](https://readme-typing-svg.demolab.com/?duration=4500&color=FFFFFF&center=True&width=1100&height=74&size=46&font=Tektur&lines=Collectinginformation_browser_vk)](https://git.io/typing-svg)
+============================================================================================================================
 
 <div align="center">
-  <h1 align="center">Collectinginformation_browser_vk</h1>  
   <h3 align="center">Парсер, находящий источники информации о заданном субъекте/объекте</b></h3>
 </div>
 
