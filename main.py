@@ -9,7 +9,7 @@ import vk_api
 from vk_api.exceptions import ApiError
 
 spisok = []
-token = 'a981cae6a981cae6a981cae6d9aaae9f91aa981a981cae6ce7c910f1716f384606a5381'
+token = '***'
 needwords = ['***', '***', ***']
 query = ['***', '***', '***', '***']
 ua = UserAgent()
