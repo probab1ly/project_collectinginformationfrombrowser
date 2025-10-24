@@ -20,11 +20,12 @@ options.add_argument('--disable-popup-blocking')
 options.add_argument(f'--user-agent={user_agent}')
 driver = webdriver.Chrome(options=options)
 
-access_token = 'vk1.a.TG0toYM7T8fb1FOxFT-Vtxu-3Db4XVtdUbzhJeRnkDRx58mIujNZtci-S1jgFawYMpnqoWd6dmRs-slHgmoYdsES-mk7-ziTe9Wy-uHOs04ksIytCPpFcn-5QYnjmDOSofpiSCRCOwMDpEnBlzJd0JCARaqXVtBH8A_A4s-D8zbJQDHOb6Eok8C99uiWtmjf2t87gbKwyMbaiiLvBRhqlg'
+access_token = ''
 vk_session = vk_api.VkApi(token=access_token)
 vk = vk_session.get_api()
 
 def findvk(word):
+    print('Запуск парсера в Яндекс')
     try:
         results = vk.newsfeed.search(q=word, count=200)
         items = results['items']
@@ -109,3 +110,4 @@ def main():
 
 if __name__=='__main__':
     main()
+
